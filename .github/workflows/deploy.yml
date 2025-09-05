@@ -38,3 +38,7 @@ jobs:
     
     - name: Sync to S3
       run: aws s3 sync frontend/dist/ s3://${{ secrets.S3_BUCKET_NAME }} --delete
+    
+    - name: Trigger Amplify Deployment
+      run: |
+        aws amplify start-job --app-id ${{ secrets.AMPLIFY_APP_ID }} --branch-name ${{ secrets.AMPLIFY_BRANCH_NAME }} --job-type RELEASE
