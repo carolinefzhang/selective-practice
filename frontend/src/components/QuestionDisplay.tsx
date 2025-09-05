@@ -46,7 +46,7 @@ const QuestionDisplay: React.FC<QuestionProps> = ({ question, selectedOption, se
                             <button
                                 onClick={() => setSelectedOption(option)}
                                 style={{
-                                    backgroundColor: selectedOption === option ? (isCorrect ? 'lightgreen' : 'salmon') : 'white',
+                                    backgroundColor: selectedOption === option ? (isCorrect ? 'lightgreen' : 'salmon') : '',
                                     marginRight: '10px',
                                     verticalAlign: 'top'
                                 }}
