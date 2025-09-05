@@ -395,8 +395,8 @@ async function main() {
     await clickViewMoreIfExists(newPage, QUESTION_SELECTOR, questionCount); // Pass current question index (0 for the first)
     let currentQuestionData = await extractQuestionData();
     
-    while (currentQuestionData.question && questionCount < 100) { // Check for question text
-      if (currentQuestionData.question) { // Ensure there's a question
+    while ((currentQuestionData.question || currentQuestionData.question_images) && questionCount < 100) { // Check for question text
+      if (currentQuestionData.question || currentQuestionData.question_images) { // Ensure there's a question
         // Prepare data for CSV
         const csvRow = {
           question: currentQuestionData.question,
