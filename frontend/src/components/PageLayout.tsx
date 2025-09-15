@@ -1,12 +1,12 @@
 
 import React from "react";
-import { Header } from "./header"
+import Header from "./Header"
 
 interface Props {
   children: React.ReactNode;
 }
 
-export const PageLayout: React.FC<Props> = ({ children }) => {
+const PageLayout: React.FC<Props> = ({ children }) => {
   return (
     <div className="page-layout">
       <Header />
@@ -14,3 +14,5 @@ export const PageLayout: React.FC<Props> = ({ children }) => {
     </div>
   );
 };
+
+export default PageLayout;

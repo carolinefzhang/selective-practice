@@ -1,12 +1,12 @@
 import { withAuthenticationRequired } from "@auth0/auth0-react";
 import React, { type ComponentType } from "react";
-import PageLoader from "../components/page-loader";
+import PageLoader from "../components/PageLoader";
 
 interface AuthenticationGuardProps {
   component: ComponentType;
 }
 
-export const AuthenticationGuard: React.FC<AuthenticationGuardProps> = ({
+const AuthenticationGuard: React.FC<AuthenticationGuardProps> = ({
   component,
 }) => {
   const Component = withAuthenticationRequired(component, {
@@ -19,3 +19,5 @@ export const AuthenticationGuard: React.FC<AuthenticationGuardProps> = ({
 
   return <Component />;
 };
+
+export default AuthenticationGuard;

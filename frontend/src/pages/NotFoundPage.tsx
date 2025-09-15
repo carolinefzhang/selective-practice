@@ -1,7 +1,7 @@
 import React from "react";
-import { PageLayout } from "../components/page-layout";
+import PageLayout from "../components/PageLayout";
 
-export const NotFoundPage: React.FC = () => {
+const NotFoundPage: React.FC = () => {
   return (
     <PageLayout>
       <div className="content-layout">
@@ -12,3 +12,5 @@ export const NotFoundPage: React.FC = () => {
     </PageLayout>
   );
 };
+
+export default NotFoundPage;

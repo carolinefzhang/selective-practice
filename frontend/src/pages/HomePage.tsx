@@ -1,8 +1,8 @@
 // filepath: frontend/src/App.tsx
 import React, { useState } from "react";
-import QuestionDisplay from "../components/question-display";
+import QuestionDisplay from "../components/QuestionDisplay";
 import { createClient } from "@supabase/supabase-js";
-import { PageLayout } from "../components/page-layout";
+import PageLayout from "../components/PageLayout";
 import LogoutButton from "../components/logout-button";
 
 const supabase = createClient(

@@ -6,7 +6,7 @@ interface Auth0ProviderWithNavigateProps {
   children: React.ReactNode;
 }
 
-export const Auth0ProviderWithNavigate = ({
+const Auth0ProviderWithNavigate = ({
   children,
 }: PropsWithChildren<Auth0ProviderWithNavigateProps>): React.ReactNode | null => {
   const navigate = useNavigate();
@@ -48,3 +48,5 @@ export const Auth0ProviderWithNavigate = ({
     </Auth0Provider>
   );
 };
+
+export default Auth0ProviderWithNavigate;

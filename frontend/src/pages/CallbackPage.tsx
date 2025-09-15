@@ -1,9 +1,9 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import React from "react";
-import { PageLayout } from "../components/page-layout";
-import { Header } from "../components/header";
+import PageLayout from "../components/PageLayout";
+import Header from "../components/Header";
 
-export const CallbackPage: React.FC = () => {
+const CallbackPage: React.FC = () => {
   const { error } = useAuth0();
 
   if (error) {
@@ -30,3 +30,5 @@ export const CallbackPage: React.FC = () => {
     </div>
   );
 };
+
+export default CallbackPage;

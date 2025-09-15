@@ -1,9 +1,9 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
-import { App } from './app'
+import App from './App'
 import { BrowserRouter } from 'react-router-dom'
-import { Auth0ProviderWithNavigate } from './auth/auth0-provider-with-navigate'
+import Auth0ProviderWithNavigate from './auth/Auth0ProviderWithNavigate'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
