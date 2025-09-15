@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import QuestionDisplay from "../components/QuestionDisplay";
 import { createClient } from "@supabase/supabase-js";
 import PageLayout from "../components/PageLayout";
-import LogoutButton from "../components/logout-button";
+import LogoutButton from "../components/LogoutButton";
 
 const supabase = createClient(
     import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_ANON_KEY);
