@@ -156,6 +156,7 @@ async function uploadCsvToSupabase() {
           question_images: questionSupabaseImageUrls.length > 0 ? questionSupabaseImageUrls : null, // Supabase TEXT[] for question images
           options_images: optionsForSupabaseJsonb.length > 0 ? optionsForSupabaseJsonb : null,      // Supabase JSONB for options with their images
           answer_images: answerSupabaseImageUrls.length > 0 ? answerSupabaseImageUrls : null,    // Supabase TEXT[] for answer images
+          note: row.note || null,
         });
       }
 

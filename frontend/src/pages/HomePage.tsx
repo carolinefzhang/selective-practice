@@ -4,9 +4,8 @@ import QuestionDisplay from "../components/QuestionDisplay";
 import { createClient } from "@supabase/supabase-js";
 import PageLayout from "../components/PageLayout";
 import LogoutButton from "../components/LogoutButton";
+import { useAuth0 } from "@auth0/auth0-react";
 
-const supabase = createClient(
-    import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_ANON_KEY);
 interface Question {
   id: number;
   question: string;
@@ -18,21 +17,60 @@ interface Question {
 }
 
 const HomePage: React.FC = () => {
+  const { isAuthenticated, isLoading, getIdTokenClaims } = useAuth0();
   const [question, setQuestion] = useState<Question | null>(null);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
 
+  if (isLoading) return <div>Loading...</div>;
+  if (!isAuthenticated) return <div>Please log in to access questions.</div>;
+
   const handleGetQuestion = async () => {
-    
-    const { data, count } = await supabase.from('questions').select('*', { count: 'exact' });
-    if (data) {
-      console.log("Data fetched from Supabase:", data);
-    } else {
-      console.error("Error fetching data from Supabase");
+    try {
+      const idTokenClaims = await getIdTokenClaims();
+      const token = idTokenClaims?.__raw;
+      console.log('Auth0 ID token:', token);
+      
+      // Create Supabase client with Auth0 token
+      const authenticatedSupabase = createClient(
+        import.meta.env.VITE_SUPABASE_URL,
+        import.meta.env.VITE_SUPABASE_ANON_KEY,
+        {
+          global: {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        }
+      );
+      
+      const { data: allData, count, error } = await authenticatedSupabase
+        .from('questions')
+        .select('*', { count: 'exact' })
+        .eq('note', 'term4'); // Filter by note 'term4'
+      
+      console.log('Raw response:', { allData, count, error });
+      
+      if (error) {
+        console.error('Supabase error:', error);
+        console.log('Error details:', error.message, error.code);
+        return;
+      }
+      
+      if (!allData || allData.length === 0) {
+        console.log('No data returned - likely RLS policy blocking access');
+        console.log('Check Supabase dashboard: Authentication > Policies');
+        console.log('Either disable RLS or create a policy allowing SELECT');
+        return;
+      }
+      
+      console.log(`Found ${count} questions:`, allData);
+      const randomIndex = Math.floor(Math.random() * allData.length);
+      const randomQuestion = allData[randomIndex];
+      setQuestion(randomQuestion);
+      setSelectedOption(null);
+    } catch (error) {
+      console.error('Catch error:', error);
     }
-    const randomIndex = count ? Math.floor(Math.random() * count): 0;
-    const randomQuestion = data?data[randomIndex]:null
-    setQuestion(randomQuestion);
-    setSelectedOption(null); // Reset selected option when fetching a new question
   };
 
   return (

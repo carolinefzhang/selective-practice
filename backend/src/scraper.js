@@ -149,13 +149,42 @@ async function main() {
     // Add a delay to ensure the page is fully loaded after login
     await new Promise(resolve => setTimeout(resolve, 5000));
 
-    // Click the 'Quizzes' button after login
+    // Handle modal popup after login
+    try {
+      await page.waitForSelector('input[type="checkbox"]', { timeout: 5000 });
+      await page.click('input[type="checkbox"]');
+      await page.click('button');
+      console.log("Modal dismissed successfully.");
+    } catch (e) {
+      console.log("No modal found or failed to dismiss:", e.message);
+    }
+
+    // Click the 'Quizzes' button and wait for popup
     console.log("Clicking 'Quizzes' button...");
-    // Wait for the new window to open
-    const newPagePromise = new Promise(resolve => page.once('popup', resolve));
-    await page.click(QUIZZES_BUTTON_SELECTOR);
+    
+    // Wait for button to be visible and clickable
+    await page.waitForSelector(QUIZZES_BUTTON_SELECTOR, { visible: true, timeout: 10000 });
+    await new Promise(resolve => setTimeout(resolve, 2000)); // Extra wait after modal
+    
+    const newPagePromise = new Promise(resolve => {
+      browser.once('targetcreated', async target => {
+        const newPage = await target.page();
+        resolve(newPage);
+      });
+    });
+    
+    // Try clicking with force if normal click fails
+    try {
+      await page.click(QUIZZES_BUTTON_SELECTOR);
+    } catch (e) {
+      console.log("Normal click failed, trying force click:", e.message);
+      await page.evaluate((selector) => {
+        document.querySelector(selector).click();
+      }, QUIZZES_BUTTON_SELECTOR);
+    }
     const newPage = await newPagePromise;
     console.log("New window opened, switching to it...");
+    
     await newPage.waitForNavigation({ waitUntil: 'networkidle0' });
     await newPage.screenshot({ path: "debug_quizzes_page.png" });
     console.log("Screenshot of quizzes page saved to debug_quizzes_page.png");
@@ -166,8 +195,7 @@ async function main() {
 
     // Navigate to the exams page in the same session
     console.log(`Navigating to exams page: ${DATA_PAGE_URL}`);
-    // Set cookies for the exams subdomain
-    await page.setCookie(...cookies);
+    await newPage.setCookie(...cookies);
     await newPage.goto(DATA_PAGE_URL, { waitUntil: "networkidle0" });
     await newPage.screenshot({ path: "debug_exams_page.png" });
     console.log("Screenshot of exams page saved to debug_exams_page.png");
@@ -383,6 +411,7 @@ async function main() {
           options_data: optionsData, 
           answer: correctAnswerText, // Renaming for consistency with CSV
           answer_images: correctAnswerImageUrls, // New field for answer images
+          note: 'term4'
         };
       }, QUESTION_SELECTOR, OPTIONS_SELECTOR, ANSWER_SELECTOR);
     };
@@ -407,6 +436,7 @@ async function main() {
           options_images: JSON.stringify(currentQuestionData.options_data.map(opt => opt.imageUrls)), // Store array of arrays of image URLs, preserving empty arrays for options without images
           answer: currentQuestionData.answer,
           answer_images: JSON.stringify(currentQuestionData.answer_images || []), // Store as JSON string
+          note: currentQuestionData.note || ''
         };
         scrapedData.push(csvRow);
         questionCount++;
